@@ -79,7 +79,7 @@ export const login = async (req, res) => {
       });
     }
 
-    if (role !== user.role) {
+    if (role.toLowerCase() !== user.role) {
       return res.status(400).json({
         message: "Account doesn't exist with the current role 🚫",
         success: false,
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id },
-      process.env.SECRET_KEY,
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
@@ -116,6 +116,7 @@ export const login = async (req, res) => {
     });
   }
 };
+
 
 
 export const logout = async (req, res) => {
