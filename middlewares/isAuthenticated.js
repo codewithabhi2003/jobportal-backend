@@ -11,7 +11,7 @@ const isAuthenticated = (req, res, next) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_KEY); // ❌ Removed unnecessary `await`
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // ❌ Removed unnecessary `await`
 
         if (!decoded) {
             return res.status(401).json({
