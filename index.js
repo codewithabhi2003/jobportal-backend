@@ -26,7 +26,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "http://jobportal-backend-navy.vercel.app",
+      "https://jobportal-backend-navy.vercel.app",
     ],
     credentials: true,
   })
