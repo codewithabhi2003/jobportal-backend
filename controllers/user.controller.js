@@ -53,57 +53,70 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    try {
-        const { email, password, role } = req.body;
-        if (!email || !password || !role) {
-            return res.status(400).json({
-                message: "Something is missing ⚠️",
-                success: false
-            });
-        }
+  try {
+    const { email, password, role } = req.body;
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({
-                message: "Incorrect email or password ❌",
-                success: false,
-            });
-        }
-
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
-        if (!isPasswordMatch) {
-            return res.status(400).json({
-                message: "Incorrect email or password ❌",
-                success: false,
-            });
-        }
-
-        if (role !== user.role) {
-            return res.status(400).json({
-                message: "Account doesn't exist with the current role 🚫",
-                success: false
-            });
-        }
-
-        const tokenData = { userId: user._id };
-        const token = jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
-
-        user.password = undefined; // Hide password in response
-
-        return res.status(200).cookie("token", token, {
-            maxAge: 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            sameSite: 'strict'
-        }).json({
-            message: `Welcome back, ${user.fullname} 😊`,
-            user,
-            success: true
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal server error ⚙️", success: false });
+    if (!email || !password || !role) {
+      return res.status(400).json({
+        message: "Something is missing ⚠️",
+        success: false,
+      });
     }
+
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(400).json({
+        message: "Incorrect email or password ❌",
+        success: false,
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({
+        message: "Incorrect email or password ❌",
+        success: false,
+      });
+    }
+
+    if (role !== user.role) {
+      return res.status(400).json({
+        message: "Account doesn't exist with the current role 🚫",
+        success: false,
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.SECRET_KEY,
+      { expiresIn: "1d" }
+    );
+
+    user.password = undefined;
+
+    return res
+      .status(200)
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .json({
+        message: `Welcome back, ${user.fullname} 😊`,
+        user,
+        success: true,
+      });
+
+  } catch (error) {
+    console.error("LOGIN ERROR 🔥", error);
+    return res.status(500).json({
+      message: "Internal server error ⚙️",
+      success: false,
+    });
+  }
 };
+
 
 export const logout = async (req, res) => {
     try {
