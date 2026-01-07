@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['job-seeker', 'recruiter'], // ✅ Ensure this matches your input data
+        enum: ['job-seeker', 'Recruiter'], // ✅ Ensure this matches your input data
         required: true
     },
     profile: {
