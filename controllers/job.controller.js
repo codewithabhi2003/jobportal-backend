@@ -38,30 +38,33 @@ export const postJob = async (req, res) => {
 
 // Get all jobs (for students)
 export const getAllJobs = async (req, res) => {
-    try {
-        const keyword = req.query.keyword || "";
+  try {
+    const keyword = req.query.keyword || "";
 
-        const query = {
-            $or: [
-                { title: { $regex: keyword, $options: "i" } },
-                { description: { $regex: keyword, $options: "i" } }
-            ]
-        };
+    const query = {
+      $or: [
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+        { location: { $regex: keyword, $options: "i" } },
+        { jobType: { $regex: keyword, $options: "i" } },
+        { requirements: { $regex: keyword, $options: "i" } },
+      ],
+    };
 
-        const jobs = await Job.find(query)
-            .populate("company")
-            .sort({ createdAt: -1 });
+    const jobs = await Job.find(query)
+      .populate("company")
+      .sort({ createdAt: -1 });
 
-        return res.status(200).json({
-            jobs,
-            success: true
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false });
-    }
+    return res.status(200).json({
+      success: true,
+      jobs,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false });
+  }
 };
+
 
 
 // Get job by ID (for students)
