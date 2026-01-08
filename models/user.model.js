@@ -1,37 +1,31 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    fullname: {
-        type: String,
-        required: true
+  fullname: String,
+  email: { type: String, unique: true },
+  phoneNumber: String,
+  password: String,
+  role: {
+    type: String,
+    enum: ["job-seeker", "Recruiter"],
+  },
+
+  // ✅ ADD THIS
+  savedJobs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Job",
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    phoneNumber: {
-        type: String, // ✅ Changed from Number to String
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    role: {
-        type: String,
-        enum: ['job-seeker', 'Recruiter'], // ✅ Ensure this matches your input data
-        required: true
-    },
-    profile: {
-        bio: { type: String, default: "" },
-        skills: [{ type: String, default: [] }],
-        resume: { type: String },
-        resumeOriginalName: { type: String  },
-        company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company'},
-        profilePhoto: { type: String, default: "" }
-    }
+  ],
+
+  profile: {
+    bio: { type: String, default: "" },
+    skills: [{ type: String }],
+    resume: String,
+    resumeOriginalName: String,
+    company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
+    profilePhoto: String,
+  },
 }, { timestamps: true });
 
-export const User = mongoose.model('User', userSchema);
-
+export const User = mongoose.model("User", userSchema);
