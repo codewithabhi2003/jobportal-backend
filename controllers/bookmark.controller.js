@@ -17,7 +17,13 @@ export const toggleBookmark = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = await User.findById(userId).populate("savedJobs");
+    const updatedUser = await User.findById(userId).populate({
+  path: "savedJobs",
+  populate: {
+    path: "company",
+    select: "name logo"
+  }
+});
 
     res.status(200).json({
       success: true,
@@ -30,7 +36,13 @@ export const toggleBookmark = async (req, res) => {
 
 export const getSavedJobs = async (req, res) => {
   try {
-    const user = await User.findById(req.id).populate("savedJobs");
+    const user = await User.findById(req.id).populate({
+      path: "savedJobs",
+      populate: {
+        path: "company",
+        select: "name logo"
+      }
+    });
 
     res.status(200).json({
       success: true,
