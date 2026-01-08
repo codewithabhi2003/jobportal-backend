@@ -4,7 +4,7 @@ import { toggleBookmark, getSavedJobs } from "../controllers/bookmark.controller
 
 const router = express.Router();
 
-router.get("/", isAuthenticated, getSavedJobs);
 router.post("/:jobId", isAuthenticated, toggleBookmark);
+router.get("/get", isAuthenticated, getBookmarks);
 
 export default router;
