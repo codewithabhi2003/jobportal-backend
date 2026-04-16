@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
+
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
@@ -13,8 +14,10 @@ dotenv.config();
 
 const app = express();
 
-/* ✅ CONNECT DATABASE (ONCE) */
-connectDB();
+/* ✅ CONNECT DATABASE (SKIP IN CI / TEST) */
+if (process.env.NODE_ENV !== "test") {
+  connectDB();
+}
 
 /* ✅ MIDDLEWARE */
 app.use(express.json());
@@ -46,8 +49,8 @@ app.get("/", (req, res) => {
 /* ✅ EXPORT FOR VERCEL */
 export default app;
 
-/* ✅ LOCAL DEV ONLY */
-if (process.env.NODE_ENV !== "production") {
+/* ✅ START SERVER (ONLY IN DEV/PROD, NOT CI) */
+if (process.env.NODE_ENV !== "test") {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
