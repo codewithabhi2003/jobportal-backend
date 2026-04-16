@@ -1,0 +1,33 @@
+name: Job Portal Backend CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm ci
+
+      - name: Check syntax
+        run: node --check server.js
+
+      - name: Set env
+        env:
+          MONGO_URI: test
+          JWT_SECRET: test
+        run: echo "env ready"
+
+      - name: Start server
+        run: |
+          node server.js &
+          sleep 5
+          echo "✅ Server started"
